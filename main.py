@@ -7,7 +7,6 @@ def draw_separator(stdscr, rows, cols):
     # stdscr.hline(y, 0, '-', cols)
     stdscr.addstr(y, 0, '-' * cols)
     stdscr.refresh()
-    stdscr.getch()
 
 def show_title_screen(stdscr, rows, cols):
     contents = ["Map maker", "version 1.0", "", "Naciśnij dowolny klawisz aby kontynuować"]
@@ -19,9 +18,16 @@ def show_title_screen(stdscr, rows, cols):
     stdscr.refresh()
     stdscr.getch()
 
-def draw_map(stdscr, rows, cols, structures):
+def draw_map(strscr, rows, cols, structures):
+    # for structure in structures:
+    #     y,x = structure
+    #     strscr.addstr(y,x,'*')
+    #     #strscr.addstr(structure[0], structure[1],'*')
     for y, x in structures:
-        stdscr.addch(y, x, '*')
+        strscr.addstr(y,x,'*')
+
+def add_structure(structures, y, x):
+    structures.append((y, x))
 
 def main(stdscr):
     curses.curs_set(0)
@@ -32,11 +38,17 @@ def main(stdscr):
     # stdscr.addstr(5, 10, f"* {height}x{width} *")
     show_title_screen(stdscr, height, width)
     stdscr.clear()
-    structures = [(3,8),(7,10),(15, 20)]
-    draw_map(stdscr, height, width, structures)
-    draw_separator(stdscr, height, width)
-    # stdscr.refresh()
+    structures = [(3,8), (7,10), (15, 20)]
+    while True:
+        draw_map(stdscr, height, width, structures)
+        draw_separator(stdscr, height, width)
+        stdscr.refresh()
 
+        key = stdscr.getch()
+        if key == curses.KEY_MOUSE:
+            _, x, y, _, bstate = curses.getmouse()
+            if bstate & curses.BUTTON1_CLICKED:
+                add_structure(structures, y, x)
 
 if __name__ == '__main__':
     curses.wrapper(main)
