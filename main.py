@@ -19,6 +19,10 @@ def show_title_screen(stdscr, rows, cols):
     stdscr.refresh()
     stdscr.getch()
 
+def draw_map(stdscr, rows, cols, structures):
+    for y, x in structures:
+        stdscr.addch(y, x, '*')
+
 def main(stdscr):
     curses.curs_set(0)
     curses.mousemask(curses.ALL_MOUSE_EVENTS | curses.REPORT_MOUSE_POSITION)
@@ -28,6 +32,8 @@ def main(stdscr):
     # stdscr.addstr(5, 10, f"* {height}x{width} *")
     show_title_screen(stdscr, height, width)
     stdscr.clear()
+    structures = [(3,8),(7,10),(15, 20)]
+    draw_map(stdscr, height, width, structures)
     draw_separator(stdscr, height, width)
     # stdscr.refresh()
 
