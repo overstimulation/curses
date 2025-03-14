@@ -1,8 +1,6 @@
 import curses
 import os
 
-barracks = None
-
 
 def load_structure_from_directory(path):
     file_names = os.listdir(path)
@@ -35,19 +33,18 @@ def draw_structure(stdscr, structure, x, y, centered=False, labeled=False, highl
         stdscr.addstr(y + len(art), x, name, color | curses.A_BOLD)
 
 
-def add_structure(structures, y, x, height):
-    structures.append((y, x))
+def add_structure(structures, y, x, height, available_structures, active_structure):
+    structures.append((y, x, list(available_structures.keys())[active_structure]))
 
 
-def draw_map(stdscr, structures):
-    global barracks
-    for y, x in structures:
-        draw_structure(stdscr, barracks, x, y, centered=True)
+def draw_map(stdscr, structures, available_structures):
+    for y, x, name in structures:
+        draw_structure(stdscr, available_structures[name], x, y, centered=True)
 
 
 def draw_scene(stdscr, structures, active_structure, available_structures, height, width):
     stdscr.clear()
-    draw_map(stdscr, structures)
+    draw_map(stdscr, structures, available_structures)
     stdscr.addstr(height - 1, 0, list(available_structures.keys())[active_structure])
     stdscr.refresh()
 
@@ -63,8 +60,6 @@ def show_title_screen(stdscr, height, width):
 
 
 def main(stdscr):
-    global barracks
-    barracks = load_structure_from_file("structures/barracks.txt")
     available_structures = load_structure_from_directory('structures')
     active_structure = 0
 
@@ -86,7 +81,7 @@ def main(stdscr):
         elif ch == curses.KEY_MOUSE:
             _, x, y, _, bstate = curses.getmouse()
             if bstate & curses.BUTTON1_CLICKED:
-                add_structure(structures, y, x, height)
+                add_structure(structures, y, x, height, available_structures, active_structure)
 
 
 if __name__ == '__main__':
